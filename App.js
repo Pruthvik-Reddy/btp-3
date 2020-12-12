@@ -40,13 +40,98 @@ export default function App() {
     // type: "vnd.openxmlformats-officedocument.spreadsheetml.sheet" // .xlsx
     // type: "text/csv" // .csv
   });
-  console.log('res : ' + JSON.stringify(res));
+      console.log('res : ' + JSON.stringify(res));
       console.log('URI : ' + res.uri);
       console.log('Type : ' + res.type);
       console.log('File Name : ' + res.name);
       console.log('File Size : ' + res.size);
 
       setSingleFile(res);
+  }
+
+
+
+  uriToBlob2 = (uri) => {
+
+    return new Promise((resolve, reject) => {
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.onload = function() {
+        // return the blob
+        resolve(xhr.response);
+      };
+      
+      xhr.onerror = function() {
+        // something went wrong
+        reject(new Error('uriToBlob failed'));
+      };
+
+      // this helps us get a blob
+      xhr.responseType = 'blob';
+
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+
+    });
+
+  }
+
+  uploadToFirebase2 = (blob) => {
+
+    return new Promise((resolve, reject)=>{
+
+      var storageRef = firebase.storage().ref();
+
+      storageRef.child('uploads/file.pdf').put(blob, {
+        contentType: 'application/pdf'
+      }).then((snapshot)=>{
+
+        blob.close();
+
+        resolve(snapshot);
+
+      }).catch((error)=>{
+
+        reject(error);
+
+      });
+
+    });
+
+
+  }      
+
+
+  handleOnPress2 = () => { 
+
+    DocumentPicker.getDocumentAsync({ 
+                                                                  mediaTypes: "*/*"
+                                                                  }).then((result)=>{ 
+
+                                                                              if (!result.cancelled) {
+        // User picked an image
+        const {height, width, type, uri} = result;
+        setSingleFile(result);
+      
+        return uriToBlob2(uri);
+
+      }
+
+    }).then((blob)=>{
+
+      return uploadToFirebase2(blob);
+
+    }).then((snapshot)=>{
+
+      console.log("Txt File uploaded to Firebase");
+   
+    }).catch((error)=>{
+
+      throw error;
+
+    }); 
+
   }
 
 
@@ -105,11 +190,11 @@ export default function App() {
 
   handleOnPress = () => { 
 
-    ImagePicker.launchImageLibraryAsync({ 
-      mediaTypes: "Images"
-    }).then((result)=>{ 
+                            ImagePicker.launchImageLibraryAsync({ 
+                                                                  mediaTypes: "Images"
+                                                                  }).then((result)=>{ 
 
-      if (!result.cancelled) {
+                                                                              if (!result.cancelled) {
         // User picked an image
         const {height, width, type, uri} = result;
         setSingleImage(result);
@@ -124,7 +209,7 @@ export default function App() {
 
     }).then((snapshot)=>{
 
-      console.log("File uploaded");
+      console.log("Image uploaded to Firebase");
    
     }).catch((error)=>{
 
@@ -135,71 +220,12 @@ export default function App() {
   }
 
 
-/*
-
-  async function handleOnPress(){
-  console.log(" Image Button Pressed");
-  ImagePicker.launchImageLibraryAsync(
-    {
-      mediaTypes:"Images"
-    }
-  ).then(async (result)=>{
-    if(!result.cancelled){
-      const {image_height,image_width}=result;
-      setSingleImage(result);
-      let image_uri=result.uri;
-      
-      console.log(result.uri);
-      console.log(image_uri);
-      let uploadUrl = await uploadImageAsync(image_uri);
-      console.log(uploadUrl);
-      console.log(result);
-      
-
-
-    }
-  })
-
-}
-async function uploadImageAsync(uri) {
-  
-
-  
-  
-	const blob = await new Promise((resolve, reject) => {
-		const xhr = new XMLHttpRequest();
-		xhr.onload = function() {
-			resolve(xhr.response);
-    };
-    console.log(uri);
-		xhr.onerror = function(e) {
-			console.log(e);
-			reject(new TypeError('Network request failed'));
-		};
-    xhr.responseType = 'blob';
-    console.log("Working");
-		xhr.open('GET', uri, true);
-		xhr.send(null);
-  });
-  console.log("Working too");
-  
-  const ref = firebase
-		.storage()
-		.ref('/');
-	const snapshot = await ref.put(blob);
-
-	blob.close();
-
-	return await snapshot.ref.getDownloadURL();
-  
-}
-*/
 
 
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!!!!</Text>
-      <Button title="Click Me" onPress={func}></Button>
+      <Button title="Click Me" onPress={handleOnPress2}></Button>
       <Text>File Name: {singleFile.name ? singleFile.name : ''}</Text>
       <Text>Choose Photo</Text>
       <Button title="Upload Image" onPress={handleOnPress}></Button>
