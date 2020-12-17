@@ -24,6 +24,7 @@ export default function two({navigation}) {
 
   const [singleFile, setSingleFile] = useState('');
   const [singleImage, setSingleImage] = useState('');
+  const[name1,setName1]=useState('');
 
   const pressHandler_21 = () => {
     //navigation.navigate('ReviewDetails');
@@ -82,13 +83,16 @@ export default function two({navigation}) {
 
   }
 
-  uploadToFirebase2 = (blob) => {
+  uploadToFirebase2 = (blob,name) => {
 
     return new Promise((resolve, reject)=>{
 
       var storageRef = firebase.storage().ref();
+      console.log(name);
+      console.log(name1.name);
+      let name2=name1.name;
 
-      storageRef.child('uploads/file.pdf').put(blob, {
+      storageRef.child('uploads/'+name2).put(blob, {
         contentType: 'application/pdf'
       }).then((snapshot)=>{
 
@@ -118,7 +122,11 @@ export default function two({navigation}) {
         // User picked an image
         const {height, width, type, uri} = result;
         setSingleFile(result);
-      
+        console.log(result);
+        console.log(result.name);
+        setName1(result);
+        console.log({name1});
+                                                                      
         return uriToBlob2(uri);
 
       }
@@ -202,6 +210,7 @@ export default function two({navigation}) {
                                                                               if (!result.cancelled) {
         // User picked an image
         const {height, width, type, uri} = result;
+        console.log(result);
         setSingleImage(result);
       
         return uriToBlob(uri);
@@ -247,6 +256,8 @@ export default function two({navigation}) {
         
       </Button>
       <Text>File Name: {singleFile.name ? singleFile.name : ''}</Text>
+      
+      <Text> Name: {name1.name ? name1.name : ''}</Text>
       <Text>Choose Photo</Text>
       <Button  title="Upload Image" onPress={handleOnPress}></Button>
       <Text>Status: {singleImage.uri ? "Image Uploaded" : ''}</Text>
