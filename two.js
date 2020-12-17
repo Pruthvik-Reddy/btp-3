@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React,{useState, Component} from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, StatusBar, TouchableOpacity} from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import uuid from 'uuid';
@@ -8,6 +7,7 @@ import storage from '@react-native-firebase/storage';
 //import {firebase} from '../btp-proj-3/src/firebase';
 import * as firebase from 'firebase';
 import 'firebase/storage';
+import {LinearGradient} from 'expo-linear-gradient';
 
 firebase.initializeApp({
     apiKey: "AIzaSyCepAcNEj3IT9eXbntsFTz0mYDdxXG1EPY",
@@ -24,6 +24,11 @@ export default function two({navigation}) {
 
   const [singleFile, setSingleFile] = useState('');
   const [singleImage, setSingleImage] = useState('');
+
+  const pressHandler_21 = () => {
+    //navigation.navigate('ReviewDetails');
+    navigation.push('three');
+  }
 
 
   async function func(){
@@ -232,27 +237,96 @@ export default function two({navigation}) {
  }
 
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!!!!</Text>
-      <Button title="Click Me" onPress={handleOnPress2}></Button>
+    <View >
+      <StatusBar  barStyle="light-content"/>
+        <View >
+            <Text >Welcome!</Text>
+        </View>
+        
+      <Button  title="Upload File" onPress={handleOnPress2}>
+        
+      </Button>
       <Text>File Name: {singleFile.name ? singleFile.name : ''}</Text>
       <Text>Choose Photo</Text>
-      <Button title="Upload Image" onPress={handleOnPress}></Button>
+      <Button  title="Upload Image" onPress={handleOnPress}></Button>
       <Text>Status: {singleImage.uri ? "Image Uploaded" : ''}</Text>
-      <Button title="Submit to get response" onPress={httpcall}></Button>
+      <Button  title="Upload to the cloud" onPress={httpcall}>
+        </Button>
+      <Text></Text>
+      <Button  title="Get the Output" onPress={pressHandler_21}>
+        </Button>
       
-      <StatusBar style="auto" />
+      
     </View>
   );
 
 
 }
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1, 
+    backgroundColor: '#009387'
   },
+  header: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      paddingHorizontal: 20,
+      paddingBottom: 50
+  },
+  footer: {
+      flex: 3,
+      backgroundColor: '#fff',
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      paddingHorizontal: 20,
+      paddingVertical: 30
+  },
+  text_header: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 30
+  },
+  text_footer: {
+      color: '#05375a',
+      fontSize: 18
+  },
+  action: {
+      flexDirection: 'row',
+      marginTop: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#f2f2f2',
+      paddingBottom: 5
+  },
+  actionError: {
+      flexDirection: 'row',
+      marginTop: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#FF0000',
+      paddingBottom: 5
+  },
+  textInput: {
+      flex: 1,
+      marginTop: Platform.OS === 'ios' ? 0 : -12,
+      paddingLeft: 10,
+      color: '#05375a',
+  },
+  errorMsg: {
+      color: '#FF0000',
+      fontSize: 14,
+  },
+  button: {
+      alignItems: 'center',
+      marginTop: 50
+  },
+  signIn: {
+      width: '100%',
+      height: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10
+  },
+  textSign: {
+      fontSize: 18,
+      fontWeight: 'bold'
+  }
 });
