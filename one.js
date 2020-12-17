@@ -1,15 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{useState, Component} from 'react';
 import { StyleSheet, Text, View, Button, ImageBackground } from 'react-native';
-import Navigator from './routes/homeStack';
 
 
-export default function App() {
+export default function one({navigation}) {
+
+
+    const pressHandler = () => {
+        //navigation.navigate('ReviewDetails');
+        navigation.push('two');
+      }
 
 
   return (
-    <Navigator />
-    );
+    <View style={ styles.container }>
+        <ImageBackground source={require('./assets/btp1.jpg')} style={styles.backgroundImage} >
+          <View style={ styles.loginForm }>
+            <Text style={ styles.text }>Detect Objects</Text>
+            <Button title='NEXT' onPress={pressHandler} />
+          </View>
+        </ImageBackground>
+      </View>
+  );
 
 
 }
